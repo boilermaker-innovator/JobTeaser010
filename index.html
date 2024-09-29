@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Teaser Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; }
+        .form-container { border: 2px solid #0056b3; border-radius: 8px; padding: 20px; background-color: #f9f9f9; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .form-group textarea { resize: vertical; }
+        button { padding: 10px 15px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        button:hover { background-color: #003d80; }
+        .output-container { margin-top: 20px; padding: 15px; border: 2px solid #0056b3; border-radius: 8px; background-color: white; }
+        .job-header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; }
+        .job-logo { width: 60px; height: 60px; object-fit: contain; margin-right: 15px; background-color: white; border-radius: 50%; }
+        .tabs { display: flex; background-color: #e0e0e0; }
+        .tab { padding: 10px; cursor: pointer; background-color: #e0e0e0; border: none; flex-grow: 1; color: #0056b3; }
+        .tab.active { background-color: white; font-weight: bold; border-bottom: 2px solid #0056b3; }
+        .tab-content { padding: 15px; display: none; min-height: 100px; }
+        .tab-content.active { display: block; }
+        .apply-button { display: block; width: 100%; padding: 12px 0; background-color: #e4007e; color: white; text-align: center; text-decoration: none; font-weight: bold; }
+        /* Blue border around the job teaser */
+        .job-teaser { border: 2px solid #0056b3; padding: 15px; border-radius: 8px; margin-top: 20px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+
+<h2>Create Job Teaser with Automation</h2>
+
+<div class="form-container">
+    <div class="form-group">
+        <label for="jobAd">Job Ad (Paste Here for Reference):</label>
+        <textarea id="jobAd" rows="6" placeholder="Paste the job ad here..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="companyLogo">Company Logo URL:</label>
+        <input type="text" id="companyLogo" placeholder="Enter logo URL">
+    </div>
+
+    <div class="form-group">
+        <label for="jobTitle">Job Title:</label>
+        <input type="text" id="jobTitle" placeholder="Enter job title">
+    </div>
+
+    <div class="form-group">
+        <label for="companyLocation">Company Name & Location:</label>
+        <input type="text" id="companyLocation" placeholder="Enter company name and location">
+    </div>
+
+    <div class="form-group">
+        <label for="overview">Overview:</label>
+        <textarea id="overview" rows="4" placeholder="Enter job overview"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="duties">Duties:</label>
+        <textarea id="duties" rows="4" placeholder="Enter job duties (use commas for separation)"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="requirements">Requirements:</label>
+        <textarea id="requirements" rows="4" placeholder="Enter job requirements (use commas for separation)"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="notes">Notes:</label>
+        <textarea id="notes" rows="4" placeholder="Enter additional notes"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="applyLink">Apply Link:</label>
+        <input type="text" id="applyLink" placeholder="Enter apply link (e.g., Seek)">
+    </div>
+
+    <button type="button" onclick="generateTeaser()">Generate Job Teaser</button>
+    <button type="button" onclick="prefillSampleData()">Prefill Sample Data</button>
+    <button type="button" onclick="clearForm()">Clear Form</button>
+</div>
+
+<div class="output-container">
+    <h3>Job Teaser Preview:</h3>
+    <div id="jobTeaserPreview"></div>
+</div>
+
+<script>
+function generateTeaser() {
+    const companyLogo = document.getElementById("companyLogo").value;
+    const jobTitle = document.getElementById("jobTitle").value;
+    const companyLocation = document.getElementById("companyLocation").value;
+    const overview = document.getElementById("overview").value;
+    const duties = document.getElementById("duties").value.split(',').map(item => `<li>${item.trim()}</li>`).join('');
+    const requirements = document.getElementById("requirements").value.split(',').map(item => `<li>${item.trim()}</li>`).join('');
+    const notes = document.getElementById("notes").value;
+    const applyLink = document.getElementById("applyLink").value;
+
+    const teaserHTML = `
+        <div class="job-teaser">
+            <div class="job-header">
+                <img src="${companyLogo}" alt="Company Logo" class="job-logo">
+                <div>
+                    <h2 class="job-title">${jobTitle}</h2>
+                    <div class="job-company-location">${companyLocation}</div>
+                </div>
+            </div>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('overview')">Overview</button>
+                <button class="tab" onclick="showTab('duties')">Duties</button>
+                <button class="tab" onclick="showTab('requirements')">Requirements</button>
+                <button class="tab" onclick="showTab('notes')">Notes</button>
+            </div>
+            <div id="overview" class="tab-content active">
+                <p>${overview}</p>
+            </div>
+            <div id="duties" class="tab-content">
+                <ul>
+                    ${duties}
+                </ul>
+            </div>
+            <div id="requirements" class="tab-content">
+                <ul>
+                    ${requirements}
+                </ul>
+            </div>
+            <div id="notes" class="tab-content">
+                <p>${notes}</p>
+            </div>
+            <a href="${applyLink}" class="apply-button">Apply Now</a>
+        </div>
+    `;
+
+    document.getElementById("jobTeaserPreview").innerHTML = teaserHTML;
+
+    const tabs = document.querySelectorAll('.tab');
+    let currentTabIndex = 0;
+    
+    setInterval(() => {
+        tabs[currentTabIndex].classList.remove('active');
+        document.querySelectorAll('.tab-content')[currentTabIndex].classList.remove('active');
+        
+        currentTabIndex = (currentTabIndex + 1) % tabs.length;
+        
+        tabs[currentTabIndex].classList.add('active');
+        document.querySelectorAll('.tab-content')[currentTabIndex].classList.add('active');
+    }, 5000); // Switches tabs every 5 seconds
+}
+
+function prefillSampleData() {
+    document.getElementById("jobAd").value = "Looking for an experienced web developer to join a fast-paced environment!";
+    document.getElementById("companyLogo").value = "https://via.placeholder.com/60";
+    document.getElementById("jobTitle").value = "Web Developer";
+    document.getElementById("companyLocation").value = "Tech Solutions Inc. - San Francisco, CA";
+    document.getElementById("overview").value = "Join our dynamic team to develop cutting-edge web applications.";
+    document.getElementById("duties").value = "Develop front-end,Work with backend developers,Collaborate with design team,Test and debug applications";
+    document.getElementById("requirements").value = "3+ years experience in web development,Knowledge of JavaScript and React,Experience with RESTful APIs,Good communication skills";
+    document.getElementById("notes").value = "Remote work available. Looking to hire ASAP!";
+    document.getElementById("applyLink").value = "https://www.seek.com.au/job/12345678";
+}
+
+function clearForm() {
+    document.getElementById("jobAd").value = "";
+    document.getElementById("companyLogo").value = "";
+    document.getElementById("jobTitle").value = "";
+    document.getElementById("companyLocation").value = "";
+    document.getElementById("overview").value = "";
+    document.getElementById("duties").value = "";
+    document.getElementById("requirements").value = "";
+    document.getElementById("notes").value = "";
+    document.getElementById("applyLink").value = "";
+    document.getElementById("jobTeaserPreview").innerHTML = "";
+}
+
+function showTab(tabName) {
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        if (tab.textContent.toLowerCase() === tabName.toLowerCase()) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+
+    tabContents.forEach(content => {
+        if (content.id === tabName) {
+            content.classList.add('active');
+        } else {
+            content.classList.remove('active');
+        }
+    });
+}
+</script>
+
+</body>
+</html>
